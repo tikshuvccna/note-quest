@@ -1,0 +1,25 @@
+{
+  "name": "note-quest",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Note Quest — a blockbuster Hebrew (do-re-mi / דו-רה-מי) note-reading game",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "phaser": "^3.80.1"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1",
+    "playwright": "^1.60.0",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.0",
+    "vite-plugin-pwa": "^0.20.1",
+    "vitest": "^2.0.5"
+  }
+}
