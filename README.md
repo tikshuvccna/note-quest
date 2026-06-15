@@ -4,6 +4,8 @@
 
 **משחק ללימוד קריאת תווים בעברית** (דו · רה · מי · פה · סול · לה · סי) — בנוי כדי להיות *כיף אמיתי*, כך שהלמידה קורית כתוצר לוואי של המשחק.
 
+### ▶️ [שחק עכשיו בדפדפן](https://tikshuvccna.github.io/note-quest/)
+
 🇮🇱 עברית (כאן) · [🇬🇧 English below ↓](#-note-quest--english)
 
 ---
@@ -62,6 +64,8 @@ npm test         # הרצת בדיקות / run tests
 🇬🇧 English (here) · [🇮🇱 עברית למעלה ↑](#-מסע-התווים--note-quest)
 
 ## ✨ What is it?
+
+### ▶️ [Play now in your browser](https://tikshuvccna.github.io/note-quest/)
 
 An installable web game (PWA) that teaches kids to read notes on a staff, in Hebrew, using solfège names (do-re-mi). The design takes cues from blockbuster games like Brawl Stars — a short addictive core loop, rewards, progression, and lots of "juice" (effects, sound, game feel).
 
