@@ -156,15 +156,23 @@ export function isLevelUnlocked(
 }
 
 /**
- * Unlock everything UP TO (and including) the start of world `n` — used by the
- * resume codes. Grants ⭐1 on level 1 of every world 1..n-1 (so `isLevelUnlocked`
- * opens world n) and marks those worlds' lessons done so the kid resumes cleanly.
- * Does not overwrite higher star counts already earned.
+ * Unlock the kid's progress up to world `n` (resume codes).
+ *
+ * Opens ALL stages of worlds 1..n-1 (a ⭐1 on every one of their levels, so the
+ * whole path is playable), and leaves world `n` itself FRESH but reachable — its
+ * level 1 is unlocked (because world n-1 now has stars) and the kid progresses
+ * through it normally. Marks the prior worlds' lessons done so resuming is clean.
+ *
+ * `levelCounts[i]` = number of levels in world (i+1). Worlds beyond what's needed
+ * are ignored. Never lowers a star count already earned.
  */
-export function unlockUpToWorld(data: SaveData, n: number): void {
+export function unlockUpToWorld(data: SaveData, n: number, levelCounts: number[]): void {
   for (let w = 1; w < n; w++) {
-    const key = levelKey(w, 1);
-    if ((data.levelStars[key] ?? 0) < 1) data.levelStars[key] = 1;
+    const count = levelCounts[w - 1] ?? 1;
+    for (let lvl = 1; lvl <= count; lvl++) {
+      const key = levelKey(w, lvl);
+      if ((data.levelStars[key] ?? 0) < 1) data.levelStars[key] = 1;
+    }
     markLessonDone(data, w);
   }
 }

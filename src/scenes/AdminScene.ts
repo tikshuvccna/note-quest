@@ -72,7 +72,8 @@ export class AdminScene extends Phaser.Scene {
       const bx = startX - col * 210;
       const by = top + 185 + rowi * 64;
       pillButton(this, bx, by, `${w.id} · ${w.style.theme}`, () => {
-        unlockUpToWorld(game.data, w.id + 1); // open through this world
+        // Open ALL stages through this world (worlds 1..w fully playable).
+        unlockUpToWorld(game.data, w.id + 1, WORLDS.map((x) => x.levels.length));
         markLessonDone(game.data, w.id);
         this.done(`נפתח עד עולם ${w.id}`);
       }, { width: 195, height: 52, color: COLORS.panel, fontColor: '#ffffff' });

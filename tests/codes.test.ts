@@ -7,6 +7,7 @@ import {
   ADMIN_CODE,
 } from '../src/core/codes';
 import { defaultSave, isLevelUnlocked, isLessonDone } from '../src/core/progress';
+import { getWorld } from '../src/core/curriculum';
 
 describe('resume codes', () => {
   it('maps each world code to its world (case/space-insensitive)', () => {
@@ -16,15 +17,25 @@ describe('resume codes', () => {
     expect(worldForCode('not-a-code')).toBeNull();
   });
 
-  it('redeeming a world code unlocks that world and all before it', () => {
+  it('redeeming a world code opens ALL stages of prior worlds, world N fresh', () => {
     const d = defaultSave();
     expect(isLevelUnlocked(d, 4, 1)).toBe(false);
     const res = redeemCode(d, WORLD_CODES[4]);
     expect(res).toEqual({ kind: 'world', world: 4 });
-    // World 4 (and 1..3) now reachable; lessons marked done up to there.
+
+    // Every stage of worlds 1..3 is now playable (not just level 1).
+    for (let w = 1; w < 4; w++) {
+      const count = getWorld(w).levels.length;
+      for (let lvl = 1; lvl <= count; lvl++) {
+        expect(isLevelUnlocked(d, w, lvl)).toBe(true);
+      }
+      expect(isLessonDone(d, w)).toBe(true);
+    }
+
+    // World 4 is reachable but FRESH — level 1 open, deeper levels still locked.
     expect(isLevelUnlocked(d, 4, 1)).toBe(true);
-    expect(isLevelUnlocked(d, 3, 1)).toBe(true);
-    for (let w = 1; w < 4; w++) expect(isLessonDone(d, w)).toBe(true);
+    expect(isLevelUnlocked(d, 4, 2)).toBe(false);
+    expect(isLessonDone(d, 4)).toBe(false);
   });
 
   it('does not erase higher progress when redeeming a lower code', () => {

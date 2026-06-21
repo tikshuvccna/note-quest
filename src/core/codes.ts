@@ -13,6 +13,10 @@
  */
 
 import { unlockUpToWorld, type SaveData } from './progress';
+import { WORLDS } from './curriculum';
+
+/** Level counts per world, for unlocking all prior stages. */
+const LEVEL_COUNTS = WORLDS.map((w) => w.levels.length);
 
 /** Per-world resume codes (world id → code). Themed for memorability. */
 export const WORLD_CODES: Record<number, string> = {
@@ -61,7 +65,7 @@ export function redeemCode(data: SaveData, code: string): RedeemResult {
   if (isAdminCode(code)) return { kind: 'admin' };
   const world = worldForCode(code);
   if (world == null) return { kind: 'invalid' };
-  unlockUpToWorld(data, world);
+  unlockUpToWorld(data, world, LEVEL_COUNTS);
   return { kind: 'world', world };
 }
 
