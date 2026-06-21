@@ -15,6 +15,9 @@ import { WORLDS } from '../core/curriculum';
 import { isLevelUnlocked, totalStars, levelKey, isLessonDone } from '../core/progress';
 import { pillButton, resourceChip } from '../ui/widgets';
 import { launchLevel } from '../core/director';
+import { showCodePrompt } from '../ui/codePrompt';
+import { redeemCode } from '../core/codes';
+import { getWorld } from '../core/curriculum';
 
 const MAP_TOP = 180; // where the scrollable map area starts
 const ROW_H = 150;
@@ -53,6 +56,52 @@ export class HomeScene extends Phaser.Scene {
       color: COLORS.panel,
       fontColor: '#ffffff',
     }).setDepth(101);
+    pillButton(this, 360, 56, '🔑 קוד', () => this.enterCode(), {
+      width: 170,
+      height: 60,
+      color: COLORS.panel,
+      fontColor: '#ffffff',
+    }).setDepth(101);
+  }
+
+  /** Open the code prompt and act on what was typed. */
+  private async enterCode(): Promise<void> {
+    const code = await showCodePrompt();
+    if (!code) return;
+    const res = redeemCode(game.data, code);
+    if (res.kind === 'admin') {
+      this.scene.launch('Admin');
+      return;
+    }
+    if (res.kind === 'invalid') {
+      this.flashMessage('קוד לא נכון 🤔', COLORS.bad);
+      return;
+    }
+    // World code → persist + jump there.
+    game.persist();
+    const w = getWorld(res.world);
+    this.flashMessage(`נפתח: ${w.title} 🎉`, COLORS.good);
+    this.time.delayedCall(900, () => this.scene.restart());
+  }
+
+  /** Brief centered toast message. */
+  private flashMessage(text: string, color: number): void {
+    const t = this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2, text, {
+        fontFamily: 'Rubik, sans-serif',
+        fontSize: '46px',
+        fontStyle: '900',
+        color: '#' + color.toString(16).padStart(6, '0'),
+        backgroundColor: '#14152bcc',
+        padding: { x: 28, y: 16 },
+      })
+      .setOrigin(0.5)
+      .setDepth(3000)
+      .setScale(0.6);
+    this.tweens.add({ targets: t, scale: 1, duration: 220, ease: 'Back.easeOut' });
+    this.time.delayedCall(1400, () => {
+      this.tweens.add({ targets: t, alpha: 0, duration: 250, onComplete: () => t.destroy() });
+    });
   }
 
   private buildResourceBar(): void {

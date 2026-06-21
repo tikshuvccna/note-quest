@@ -8,6 +8,7 @@ import { BootScene } from './scenes/BootScene';
 import { HomeScene } from './scenes/HomeScene';
 import { SettingsScene } from './scenes/SettingsScene';
 import { LessonScene } from './scenes/LessonScene';
+import { AdminScene } from './scenes/AdminScene';
 import { CatcherScene } from './scenes/modes/CatcherScene';
 import { QuizScene } from './scenes/modes/QuizScene';
 import { BossScene } from './scenes/modes/BossScene';
@@ -35,6 +36,7 @@ const config: Phaser.Types.Core.GameConfig = {
     HomeScene,
     SettingsScene,
     LessonScene,
+    AdminScene,
     CatcherScene,
     QuizScene,
     BossScene,

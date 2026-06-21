@@ -156,6 +156,32 @@ export function isLevelUnlocked(
 }
 
 /**
+ * Unlock everything UP TO (and including) the start of world `n` — used by the
+ * resume codes. Grants ⭐1 on level 1 of every world 1..n-1 (so `isLevelUnlocked`
+ * opens world n) and marks those worlds' lessons done so the kid resumes cleanly.
+ * Does not overwrite higher star counts already earned.
+ */
+export function unlockUpToWorld(data: SaveData, n: number): void {
+  for (let w = 1; w < n; w++) {
+    const key = levelKey(w, 1);
+    if ((data.levelStars[key] ?? 0) < 1) data.levelStars[key] = 1;
+    markLessonDone(data, w);
+  }
+}
+
+/** Open every world & level (admin): ⭐3 on every level, all lessons done. */
+export function unlockEverything(data: SaveData, worldLevelCounts: number[]): void {
+  worldLevelCounts.forEach((count, i) => {
+    const world = i + 1;
+    for (let lvl = 1; lvl <= count; lvl++) {
+      const key = levelKey(world, lvl);
+      if ((data.levelStars[key] ?? 0) < 3) data.levelStars[key] = 3;
+    }
+    markLessonDone(data, world);
+  });
+}
+
+/**
  * Update the daily streak based on today's date. Call once on app open.
  * Returns the (possibly bumped) streak.
  */
