@@ -10,8 +10,11 @@ import {
   starsFor,
   isLessonDone,
   markLessonDone,
+  unlockUpToWorld,
+  starUnlockedLevels,
   type KeyValueStore,
 } from '../src/core/progress';
+import { WORLDS } from '../src/core/curriculum';
 
 /** In-memory store for tests. */
 function memStore(): KeyValueStore & { data: Record<string, string> } {
@@ -86,6 +89,39 @@ describe('star rating', () => {
     expect(starsFor(0.5, true)).toBe(1);
     expect(starsFor(0.85, true)).toBe(2);
     expect(starsFor(0.97, true)).toBe(3);
+  });
+});
+
+describe('admin: 3 stars to currently-open levels only', () => {
+  const counts = WORLDS.map((w) => w.levels.length);
+
+  it('stars only unlocked levels and does NOT unlock locked worlds', () => {
+    const d = defaultSave();
+    // Open up to world 4 (worlds 1-3 fully, world 4 fresh).
+    unlockUpToWorld(d, 4, counts);
+    starUnlockedLevels(d, counts);
+
+    // Worlds 1-3: every stage now 3 stars.
+    for (let w = 1; w < 4; w++) {
+      for (let lvl = 1; lvl <= counts[w - 1]; lvl++) {
+        expect(d.levelStars[`${w}-${lvl}`]).toBe(3);
+      }
+    }
+    // World 4: only level 1 was open → 3 stars; deeper levels untouched.
+    expect(d.levelStars['4-1']).toBe(3);
+    expect(d.levelStars['4-2']).toBeUndefined();
+    // Worlds 5+ get NO free stars (the key requirement — not yet earned).
+    expect(d.levelStars['5-1']).toBeUndefined();
+    expect(d.levelStars['5-2']).toBeUndefined();
+    expect(d.levelStars['6-1']).toBeUndefined();
+  });
+
+  it('on a fresh save only world 1 level 1 gets a star', () => {
+    const d = defaultSave();
+    starUnlockedLevels(d, counts);
+    expect(d.levelStars['1-1']).toBe(3);
+    expect(d.levelStars['1-2']).toBeUndefined();
+    expect(d.levelStars['2-1']).toBeUndefined();
   });
 });
 

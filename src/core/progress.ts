@@ -190,6 +190,25 @@ export function unlockEverything(data: SaveData, worldLevelCounts: number[]): vo
 }
 
 /**
+ * Give ⭐3 to every level that is CURRENTLY unlocked — without unlocking any new
+ * ones. We snapshot the unlocked set first (from the current state) so awarding
+ * stars doesn't cascade-open locked levels in the same pass. So if the player
+ * has only opened up to world 4, worlds 5+ stay locked and un-starred.
+ */
+export function starUnlockedLevels(data: SaveData, worldLevelCounts: number[]): void {
+  const toStar: string[] = [];
+  worldLevelCounts.forEach((count, i) => {
+    const world = i + 1;
+    for (let lvl = 1; lvl <= count; lvl++) {
+      if (isLevelUnlocked(data, world, lvl)) toStar.push(levelKey(world, lvl));
+    }
+  });
+  for (const key of toStar) {
+    if ((data.levelStars[key] ?? 0) < 3) data.levelStars[key] = 3;
+  }
+}
+
+/**
  * Update the daily streak based on today's date. Call once on app open.
  * Returns the (possibly bumped) streak.
  */

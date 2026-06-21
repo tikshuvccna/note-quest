@@ -20,6 +20,7 @@ import {
   defaultSave,
   unlockUpToWorld,
   unlockEverything,
+  starUnlockedLevels,
   markLessonDone,
 } from '../core/progress';
 import { pillButton } from '../ui/widgets';
@@ -103,10 +104,10 @@ export class AdminScene extends Phaser.Scene {
       { width: 180, height: 54, color: COLORS.accent });
     pillButton(this, px + 90, cy, '🏆 +500', () => { game.data.trophies += 500; this.done('+500 גביעים'); },
       { width: 180, height: 54, color: COLORS.accent });
-    pillButton(this, px - 130, cy, '⭐ 3 לכולם', () => {
-      unlockEverything(game.data, WORLDS.map((w) => w.levels.length));
-      this.done('3 כוכבים לכל השלבים');
-    }, { width: 200, height: 54, color: COLORS.accent });
+    pillButton(this, px - 130, cy, '⭐ 3 לפתוחים', () => {
+      starUnlockedLevels(game.data, WORLDS.map((w) => w.levels.length));
+      this.done('3 כוכבים לשלבים הפתוחים');
+    }, { width: 220, height: 54, color: COLORS.accent });
 
     // ----- Section: modes -----
     const my = top + 488;
