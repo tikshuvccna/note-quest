@@ -49,10 +49,14 @@ export function pillButton(
     .setOrigin(0.5)
     .setDepth(2000)
     .setInteractive({ useHandCursor: true });
-  let fired = false;
+  // Short debounce (not a permanent lock): swallows accidental double-taps and
+  // duplicate events during scene transitions, but the button stays clickable
+  // for repeated use (admin panel, settings toggles, etc.).
+  let lastClick = 0;
   zone.on('pointerdown', () => {
-    if (fired) return;
-    fired = true;
+    const now = scene.time.now;
+    if (now - lastClick < 250) return;
+    lastClick = now;
     draw(5);
     t.y = 5;
     scene.time.delayedCall(90, () => {
